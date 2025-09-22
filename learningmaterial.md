@@ -123,8 +123,9 @@ Your DApp (Chain A)     LayerZero Network        Your DApp (Chain B)
   - Delivers verified messages to destination OApp via `_lzReceive()`
 
 #### 2. MessageLib (ULN302 - Ultra Light Node v3.02)
-- **What it is**: Upgradeable contract that handles message verification
-- **Why upgradeable**: Protocol improvements without redeploying OApps
+- **What it is**: Immutable contract that handles message verification
+- **How "upgrades" work**: New MessageLib versions deployed as separate contracts (e.g., ULN302 → ULN303)
+- **OApp Choice**: Applications can migrate to new MessageLibs but old ones continue working
 - **What it does**:
   - Manages DVN (Decentralized Verifier Network) configurations
   - Enforces security parameters (confirmations, DVN thresholds)
@@ -2111,6 +2112,9 @@ function _processMessage(bytes calldata _message) external {
 
 #### "How does exactly-once delivery work?"
 > "DVNs independently verify block headers and merkle proofs. The executor waits for the required DVN threshold before delivery. The endpoint tracks message nonces to prevent replays. This eliminates double-spend risks while maintaining decentralization."
+
+#### "Are MessageLibs upgradeable?" (CRITICAL CORRECTION)
+> "No! This is a common misconception. MessageLibs like ULN302 are immutable once deployed. LayerZero deploys new MessageLib versions as separate contracts (e.g., ULN302 → ULN303). OApps can choose to migrate to newer versions, but old MessageLibs continue working forever. This design ensures no single point of failure and gives developers control over their infrastructure."
 
 ### Live Demo Flow (Practice This)
 
