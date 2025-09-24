@@ -933,17 +933,8 @@ async function main() {
     // ↑ formatEther converts wei (smallest unit) to ETH for readability
     
     // LayerZero toolbox automatically resolves endpoint addresses
-    // The address below is ULN302 MessageLib, not the endpoint
+    // In practice, use deploy/MyOApp.ts which calls: await hre.deployments.get('EndpointV2')
     const networkName = process.env.HARDHAT_NETWORK
-    const messageLibs = {
-        'arbitrum-sepolia': '0x6EDCE65403992e310A62460808c4b910D972f10f', // ULN302 MessageLib
-        'optimism-sepolia': '0x6EDCE65403992e310A62460808c4b910D972f10f', // ULN302 MessageLib
-    }
-    const messageLib = messageLibs[networkName as keyof typeof messageLibs]
-    
-    if (!messageLib) {
-        throw new Error(`MessageLib not configured for network: ${networkName}`)
-    }
     
     // Get contract factory (template for deploying contracts)
     const MyOApp = await ethers.getContractFactory("MyOApp")
@@ -951,11 +942,11 @@ async function main() {
     
     console.log("Deploying MyOApp...")
     
-    // Note: In practice, use the proper deploy/MyOApp.ts script which automatically
-    // resolves endpoints via: await hre.deployments.get('EndpointV2')
-    // This manual deployment example is for educational purposes only
+    // For educational purposes - showing manual deployment pattern
+    // Endpoint address is automatically resolved by LayerZero toolbox
+    const endpointAddress = "0x..." // Auto-resolved by toolbox
     const myOApp = await MyOApp.deploy(
-        messageLib,         // This would be incorrect - should use proper endpoint
+        endpointAddress,    // LayerZero endpoint (auto-resolved)
         deployer.address    // Initial owner address
     )
     // ↑ Sends deployment transaction to network
