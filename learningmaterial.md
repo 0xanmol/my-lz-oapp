@@ -932,17 +932,17 @@ async function main() {
     console.log("Account balance:", ethers.formatEther(balance), "ETH")
     // ↑ formatEther converts wei (smallest unit) to ETH for readability
     
-    // Get LayerZero endpoint for current network
-    // Source: https://docs.layerzero.network/v2/developers/evm/technical-reference/deployed-contracts
+    // LayerZero toolbox automatically resolves endpoint addresses
+    // The address below is ULN302 MessageLib, not the endpoint
     const networkName = process.env.HARDHAT_NETWORK
-    const endpoints = {
-        'arbitrum-sepolia': '0x6EDCE65403992e310A62460808c4b910D972f10f',
-        'optimism-sepolia': '0x6EDCE65403992e310A62460808c4b910D972f10f',
+    const messageLibs = {
+        'arbitrum-sepolia': '0x6EDCE65403992e310A62460808c4b910D972f10f', // ULN302 MessageLib
+        'optimism-sepolia': '0x6EDCE65403992e310A62460808c4b910D972f10f', // ULN302 MessageLib
     }
-    const endpoint = endpoints[networkName as keyof typeof endpoints]
+    const messageLib = messageLibs[networkName as keyof typeof messageLibs]
     
-    if (!endpoint) {
-        throw new Error(`Endpoint not configured for network: ${networkName}`)
+    if (!messageLib) {
+        throw new Error(`MessageLib not configured for network: ${networkName}`)
     }
     
     // Get contract factory (template for deploying contracts)
@@ -951,9 +951,11 @@ async function main() {
     
     console.log("Deploying MyOApp...")
     
-    // Deploy contract with constructor parameters
+    // Note: In practice, use the proper deploy/MyOApp.ts script which automatically
+    // resolves endpoints via: await hre.deployments.get('EndpointV2')
+    // This manual deployment example is for educational purposes only
     const myOApp = await MyOApp.deploy(
-        endpoint,           // LayerZero endpoint address
+        messageLib,         // This would be incorrect - should use proper endpoint
         deployer.address    // Initial owner address
     )
     // ↑ Sends deployment transaction to network
